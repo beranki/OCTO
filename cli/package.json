@@ -1,0 +1,16 @@
+{
+  "name": "octo_cli",
+  "version": "1.0.0",
+  "description": "A CLI to accompany the Octo testing software.",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bhargav Eranki",
+  "license": "ISC",
+  "bin": {
+    "run": "./bin/index.js"
+  },
+  "keywords": ["cli"],
+  "type": "module"
+}
