@@ -6,14 +6,13 @@ import chalk from "chalk";
 import child_process from 'child_process';
 import terminalLink from 'terminal-link';
 import chalkAnimation from 'chalk-animation';
-import * as emoji from 'node-emoji';
 
 const yargs = _yargs(hideBin(process.argv));
 
 const error = chalk.bold.red;
 const warning = chalk.hex('#FFA500');
 
-const usage = (chalk.hex("#A866EE")("\nUsage: run [--option] [<args>]"));
+const usage = (chalk.hex("#A866EE")("\nUsage: octo [--option] [<args>]"));
 const img = await terminalImage.file("static/test_title.png");
 
 const options = yargs.usage(usage)
@@ -58,7 +57,7 @@ if (yargs.usage(usage).argv.o != null) {
     karaoke.start();
 
     setTimeout(() => {
-        child_process.exec('run --help', (error, stdout, stderr) => {
+        child_process.exec('octo --help', (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
                 return;

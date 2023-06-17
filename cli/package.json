@@ -9,7 +9,7 @@
   "author": "Bhargav Eranki",
   "license": "ISC",
   "bin": {
-    "run": "./bin/index.js"
+    "octo": "./bin/index.js"
   },
   "keywords": ["cli"],
   "type": "module"
