@@ -1,4 +1,4 @@
-![test_title](https://github.com/beranki/octo/assets/77950550/0ffeeb54-4b53-43b2-a3e6-b88a5174b12c)
+![test_title](https://github.com/beranki/OCTO/assets/77950550/0ffeeb54-4b53-43b2-a3e6-b88a5174b12c)
 
 created by **Bhargav Eranki**, 2023. 
 - developed for Cupertino Robotics testing purposes.
