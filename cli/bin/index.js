@@ -6,6 +6,9 @@ import chalk from "chalk";
 import child_process from 'child_process';
 import terminalLink from 'terminal-link';
 import chalkAnimation from 'chalk-animation';
+import glob from "glob";
+import objectTreeify from "object-treeify";
+import lodash from "lodash";
 
 const yargs = _yargs(hideBin(process.argv));
 
@@ -41,9 +44,15 @@ const options = yargs.usage(usage)
                                     demandOption: false
                                 },
                                 "a": {
-                                    alias: "file-api",
-                                    describe: chalk.blue("View rules for lab file formats."),
+                                    alias: "api",
+                                    describe: chalk.blue("View code documentation + lab file formats."),
                                     type: "boolean",
+                                    demandOption: false
+                                },
+                                "f": {
+                                    alias: "fsm",
+                                    describe: chalk.blue("A rudimentary finite state machine creation tool."),
+                                    type: "string",
                                     demandOption: false
                                 }
                               })
@@ -66,4 +75,26 @@ if (yargs.usage(usage).argv.o != null) {
             console.log(chalk.green("" + `${stdout}`));
         });
     }, 3000);
+}
+
+if (yargs.usage(usage).argv.b != null) {
+    var gd = function (src, callback) {
+        glob(src + '/**/*', callback);
+    }
+
+    gd('scripts', function (err, res) {
+        if (err) {
+            console.log("error", err);
+        } else {
+
+            const treeify = (paths) => objectTreeify(paths.reduce((p, c) => {
+                lodash.set(p, c.match(/[^/]+/g));
+                return p;
+              }, {}));
+            
+            console.log(chalk.blue(treeify(res)));
+        }
+    });
+
+
 }
