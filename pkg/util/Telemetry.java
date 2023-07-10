@@ -14,6 +14,7 @@ public class Telemetry {
     }
 
     public void update() {
+        System.out.print("\033[H\033[2J");  
         while (tel.size() > 0) {
             System.out.println(tel.remove());
         }

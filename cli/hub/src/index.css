@@ -1,0 +1,33 @@
+
+body {
+  margin: auto;
+  max-width: 100%;
+  padding: 2rem;
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%
+}
+
+.opt {
+  width: 20%;
+  margin: 10px
+}
+
+.number-holder {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+* {
+  font-family: 'Inconsolata', monospace;
+}

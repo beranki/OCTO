@@ -4,13 +4,22 @@
   "description": "A CLI to accompany the Octo testing software.",
   "main": "bin/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test d\" && exit 1",
+    "mappings": "cd hub && npm run start"
   },
   "author": "Bhargav Eranki",
   "license": "ISC",
   "bin": {
     "octo": "./bin/index.js"
   },
-  "keywords": ["cli"],
-  "type": "module"
+  "keywords": [
+    "cli"
+  ],
+  "type": "module",
+  "dependencies": {
+    "electron": "^25.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.3"
+  }
 }

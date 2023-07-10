@@ -1,27 +1,21 @@
 package pkg.opmode;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
+import pkg.util.HardwareMap;
 import pkg.util.Telemetry;
 
 public abstract class OpMode {
-    final int BASE_MS_DELAY = 5; //5 millisecond delay if there is no sleep specified
+    final int BASE_MS_DELAY = 5; //20 millisecond delay if there is no sleep specified
     private final int OPMODE_LENGTH = 30; //30 seconds
 
     public Telemetry telemetry;
     public double time;
     double START_TIME;
     boolean opModeCalled;
+    protected HardwareMap hardwareMap;
     
-    public Runnable internalOpModeServices;
-    Runnable masterCancel;
-    ScheduledFuture<?> execHandle;
-    private boolean thirtySecondStop;
-
-    ScheduledExecutorService exec;
+    public Thread internalOpModeServices;
+    protected boolean exit = false;
+    public Thread internalUpdate;
 
     public OpMode() {
         init();
@@ -29,7 +23,7 @@ public abstract class OpMode {
 
 
     public final void requestOpModeStop() {
-        exec.shutdownNow();
+        exit = true;
         stop();
     }
 
@@ -38,9 +32,7 @@ public abstract class OpMode {
     public abstract void init();
     
     /** User defined start method. By default, does nothing. */
-    public void start() {
-        if (thirtySecondStop) exec.schedule(masterCancel, OPMODE_LENGTH, TimeUnit.SECONDS);
-        
+    public void start() {        
     
     }
 
@@ -57,10 +49,6 @@ public abstract class OpMode {
 
     public void updateTelemetry(Telemetry telemetry) {
         telemetry.update();
-    }
-
-    public void set30SecondStop(boolean stop) {
-        thirtySecondStop = stop;
     }
 
 }

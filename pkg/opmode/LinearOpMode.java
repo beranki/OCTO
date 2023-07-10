@@ -1,12 +1,29 @@
 package pkg.opmode;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import pkg.hardware.HardwareDevice;
+import pkg.hardware.dcmotor.CRServo;
+import pkg.hardware.dcmotor.CRServoImpl;
+import pkg.hardware.dcmotor.DcMotor;
+import pkg.hardware.dcmotor.DcMotorImpl;
+import pkg.util.HardwareMap;
 import pkg.util.Telemetry;
 
 public abstract class LinearOpMode extends OpMode {
     
+    private int POOL_SIZE = 10;
+    private String MAPPING_PATH;
+    private String MAPPING_ID;
+    double recentMs = 0;
+
     public LinearOpMode() {
         super();
 
@@ -14,26 +31,45 @@ public abstract class LinearOpMode extends OpMode {
 
     public void init() {
         START_TIME = System.currentTimeMillis();
-        exec = Executors.newSingleThreadScheduledExecutor();
+        MAPPING_PATH = "C:\\Users\\anjan\\OneDrive\\Documents\\GitHub\\octo\\pkg\\util\\mappings.txt";
         telemetry = new Telemetry();
+        hardwareMap = new HardwareMap();
 
-        internalOpModeServices = new Runnable() {
+        map(MAPPING_PATH);
+
+        internalOpModeServices = new Thread() {
             @Override 
             public void run() {
-                loop();
-                time += BASE_MS_DELAY;
+                while (!exit) {
+                    loop();
+                    time += BASE_MS_DELAY;
+                    try {
+                        Thread.sleep(BASE_MS_DELAY);
+                    } catch (InterruptedException e) {}
+                }
             }
         };
 
-        execHandle = exec.scheduleWithFixedDelay(internalOpModeServices, 0, BASE_MS_DELAY, TimeUnit.MILLISECONDS);
-
-
-        masterCancel = new Runnable() {
+        internalUpdate = new Thread() {
             @Override
             public void run() {
-                execHandle.cancel(true);
+                while (!exit) {
+                    //System.out.println(hardwareMap.getAllDevices());
+                    for (HardwareDevice hwDevice: hardwareMap.getAllDevices()) {
+                        hwDevice.internalUpdate(BASE_MS_DELAY);
+                    }
+                    
+                    try {
+                        Thread.sleep(BASE_MS_DELAY);
+                    } catch (InterruptedException e) {}
+                }
             }
         };
+
+        
+
+        internalOpModeServices.start();
+        internalUpdate.start();
     }
 
     //Place holder isStarted - not yet integrated w/ interface
@@ -46,7 +82,7 @@ public abstract class LinearOpMode extends OpMode {
     }
     
     public boolean opModeIsActive() {
-        return !execHandle.isDone();
+        return !exit;
     }
 
     /** Override this method and write code here. */
@@ -72,5 +108,49 @@ public abstract class LinearOpMode extends OpMode {
         try {
             runOpMode();
         } catch (InterruptedException e) {}
+    }
+
+    private void map(String path) {
+        try {
+            Scanner s = new Scanner(new File(path));
+            while (s.hasNextLine()) {
+                String l = s.nextLine();
+
+                if (l.length() > 0) {
+                    if (l.charAt(0) == '!') {
+                        MAPPING_ID = l;
+                    }
+
+                    if (l.equals("@motors")) {
+                        while (s.hasNextLine()) {
+                            String m = s.nextLine();
+                            System.out.println(m);
+                            try {
+                                int portNum = Integer.parseInt(m.charAt(0) + "");
+                                String[] rest = m.substring(1).split("|");
+                                String name = rest[0].trim();
+                                String type = rest[1].trim();
+                                if (name.length() > 0 && type.length() > 0) {
+                                    if (type.equals("CRServo")) {
+                                        CRServo cr = new CRServoImpl(portNum);
+                                        hardwareMap.put(name, cr);
+                                    } else if (type.equals("DcMotor")) {
+                                        DcMotor motor = new DcMotorImpl(portNum);
+                                        hardwareMap.put(name, motor);
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                                //e.printStackTrace();
+                                break;
+                            }
+                        }
+                    }
+
+                    
+                }
+
+            }
+        } catch (IOException e) {System.out.println("mapping path not found");}
     }
 }

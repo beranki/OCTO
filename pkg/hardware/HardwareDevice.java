@@ -6,4 +6,5 @@ public interface HardwareDevice {
     public String getDeviceName();
     public int getVersion();
     public void resetDeviceConfigurationForOpMode();
+    public void internalUpdate(double ms);
 }

@@ -9,6 +9,7 @@ import chalkAnimation from 'chalk-animation';
 import glob from "glob";
 import objectTreeify from "object-treeify";
 import lodash from "lodash";
+import { createInterface } from "readline";
 
 const yargs = _yargs(hideBin(process.argv));
 
@@ -54,6 +55,12 @@ const options = yargs.usage(usage)
                                     describe: chalk.blue("A rudimentary finite state machine creation tool."),
                                     type: "string",
                                     demandOption: false
+                                },
+                                "m": {
+                                    alias: "mapping",
+                                    describe: chalk.blue("Manage current Hardware Mappings in a GUI based control. "),
+                                    type: "boolean",
+                                    demandOption: false
                                 }
                               })
                               .help(true)
@@ -95,6 +102,99 @@ if (yargs.usage(usage).argv.b != null) {
             console.log(chalk.blue(treeify(res)));
         }
     });
+}
+
+if (yargs.usage(usage).argv.m != null) {
+    if (yargs.usage(usage).argv.g != null) {
+        drawMockHub();
+        console.log("\n*Attempt to replicate REV Robotics Control/Expansion Hub (depending on mapping ID). NOT EXACT, but as close as you can get in a terminal...I think.");
+    } else if (yargs.usage(usage).argv.p != null) {
+        console.log('sample');
+    }
+}
 
 
+
+function drawMockHub() {
+    let stringToDisplay = ""
+    let w = 30, h = 25;
+
+    let motorPorts = 0;
+    let servoPorts = 0;
+    let analogPorts = 0;
+    let digitalPorts= 0;
+    let I2CPorts = 0;
+    let pwmPorts = 0;
+
+    for (let i = 0; i < h; i++) {
+        stringToDisplay += "\t";
+
+        if (i % 4 == 0 && i >= 8 && motorPorts <= 3) {
+            stringToDisplay += "MTR.pt" + chalk.greenBright("(" + (motorPorts++) + ")\t");
+        } else {
+            stringToDisplay += "\t\t";
+        }
+        for (let j = 0; j < w; j++) {
+            if (i == 0 || i == h-1 || (i == h-4 && j > 4 && j < w - 5)) {
+                stringToDisplay += chalk.bgGray("--");
+            } else if (j == 0 || j == w - 5 || j == 4) {
+                if ((i >= 8 && i % 4 == 0 && j < 4) || (j == w-5 && i %5 != 0 && i < h-7)) {
+                    stringToDisplay += chalk.bgGray("L") + chalk.gray("_");
+                } else {
+                    if (i == h-4 && j != 0 && j != w-5) {
+                        stringToDisplay += chalk.bgGray("| ");
+                    } else {
+                        stringToDisplay += chalk.bgGray("|") + ((j == 4 && i < h - 4) ? chalk.bgHex("#FFA500")(" ") : " ");
+                    }
+                }
+            } else if (j == w-1 && (j > w-5 && i % 5 != 0 && i < h - 7)) {
+                stringToDisplay += chalk.gray("_") + chalk.bgGray("|");
+            } else if (j == w-1) {
+                stringToDisplay += " " + chalk.bgGray("|");
+            } else if ((j >= 5 && j <= w-8 && j % 3 == 0 && i > h - 4)) {
+                stringToDisplay +=  " " + chalk.bgGray("|");
+            } else if (i >= 8 && i % 4 == 0 && j < 5 || (j > w-5 && i % 5 != 0 && i < h - 7)) {
+                stringToDisplay += chalk.gray("__");
+            } else {
+                if (i < h - 4 && (j > 4 && j < w - 5)) {
+                    stringToDisplay += chalk.bgHex("#FFA500")("  ");
+                } else {
+                    stringToDisplay += "  ";
+                }
+            }
+        }
+
+        stringToDisplay += "\t"
+        
+        if (i < 5 && i >= 1) {
+            stringToDisplay += chalk.greenBright("(" + (pwmPorts++) + ")") + "PWM.pt";
+        }
+
+        if (i >= 6 && i < 10) {
+            stringToDisplay += chalk.greenBright("(" + (I2CPorts++) + ")") + "I2C.pt";
+        }
+
+        if (i >= 11 && i < 15) {
+            stringToDisplay += chalk.greenBright("(" + (digitalPorts++) + "-" + (digitalPorts++) + ")") + "DIG.pt";
+        }
+
+        if (i >= 16 && i < 18) {
+            stringToDisplay += chalk.greenBright("(" + (analogPorts++) + "-" + (analogPorts++) + ")") + "ALG.pt";
+        }
+
+        stringToDisplay += "\n";
+    }
+
+    stringToDisplay += "\t\t\t\t\t";
+    for (let j = 0; j < w; j++) {
+        if (j <= w-8 && j % 3 == 1 && servoPorts <= 5) {
+            stringToDisplay += chalk.greenBright("(" + (servoPorts++) + ")   ");
+        }
+    }
+    servoPorts = 0;
+    stringToDisplay += "\n\t\t\t\t\t---------------------------------"
+    stringToDisplay += "\n\t\t\t\t\t\t\t|" +
+                        "\n\t\t\t\t\t\t   SRV.pts(0-5)";
+
+    console.log(stringToDisplay);
 }
