@@ -12,13 +12,20 @@ _project remains in progress_, and will actively be developed throughout the tra
 Usage: octo [option] [args]
 
 Options: <br>
-  **-v**, --version   Show version number                                                   [boolean] <br>
-  **-o**, --home      Home - view options + load utils                                      [boolean] <br>
-  **-b**, --branch    Visualize all custom written script in a branch based format.         [boolean] <br>
-  **-x**, --sandbox   Enter script name to run a command line based simulation.             [string] <br>
-  **-l**, --labs      Enter lab-file path and script name to determine script's accuracy.   [array] <br>
-  **-a**, --file-api  View rules for lab file formats.                                      [boolean] <br>
-  **-h**, --help      Show help                                                             [boolean] <br>
+  -o, --home     Home - view options + load utils <br>
+  -b, --branch   Visualize all custom written scripts <br>
+                 in a branch based format.                              [boolean] <br>
+                 
+  -x, --sandbox  Enter script name to run a command line based simulation. <br>
+                                                                        [string] <br>
+  -l, --labs     Enter lab-file path and script name to determine script's accur <br>
+                 acy.                                               [array] <br>
+  -a, --api      View code documentation + lab file formats. [boolean] <br>
+  -f, --fsm      A rudimentary finite state machine creation tool. <br>
+                                                                        [string] <br>
+  -m, --mapping  Manage current Hardware Mappings in a GUI based control. <br>
+                                                                       [boolean] <br>
+      --help     Show help                                             [boolean] <br>
   
 Implemented using Node.js for CLI + API backend, Svelte for API front-end, Java for mock software package. 
 
