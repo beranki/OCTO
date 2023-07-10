@@ -58,7 +58,7 @@ const options = yargs.usage(usage)
                                 },
                                 "m": {
                                     alias: "mapping",
-                                    describe: chalk.blue("Manage current Hardware Mappings in a GUI based control. "),
+                                    describe: chalk.blue("View and manage hardware mappings: -g (graphically), -p (plain)"),
                                     type: "boolean",
                                     demandOption: false
                                 }
@@ -114,7 +114,9 @@ if (yargs.usage(usage).argv.m != null) {
 }
 
 
-
+/*
+    
+*/
 function drawMockHub() {
     let stringToDisplay = ""
     let w = 30, h = 25;
