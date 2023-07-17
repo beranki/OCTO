@@ -12,6 +12,11 @@ import lodash from "lodash";
 import fs from "fs";
 import { createInterface } from "readline";
 
+const readline = createInterface({
+    input: process.stdin,
+    output: process.stderr
+})
+
 const yargs = _yargs(hideBin(process.argv));
 
 const error = chalk.bold.red;
@@ -59,7 +64,7 @@ const options = yargs.usage(usage)
                                 },
                                 "m": {
                                     alias: "mapping",
-                                    describe: chalk.blue("View and manage hardware mappings: -g (graphically), -p (plain)"),
+                                    describe: chalk.blue("View and manage hardware mappings: -g (graphically), -p (plain), -e(edit)"),
                                     type: "boolean",
                                     demandOption: false
                                 }
@@ -110,6 +115,13 @@ if (yargs.usage(usage).argv.m != null) {
         const data = fs.readFileSync("pkg/util/mappings.txt", 'utf8');
         let lines = data.split("\r\n");
 
+        let numMotors = 4;
+        let numServos = 6;
+        let numDigDev = 4;
+        let numPWM = 4;
+        let numAnalog = 2;
+        let numI2C = 4;
+
         let map = new Map();
         map.set('motor', []);
         map.set('servo', []);
@@ -125,7 +137,8 @@ if (yargs.usage(usage).argv.m != null) {
             if (lines[i].length > 0) {
                 switch (lines[i]) {
                     case '@motors':
-                        for (let j = i+1; j < i+5; j++) {
+                        i++;
+                        for (let j = i; j < i+numMotors; j++) {
                             let elems = lines[j].trim().split("|");
                             if (elems.length > 1) {
                                 //console.log(elems);
@@ -138,16 +151,97 @@ if (yargs.usage(usage).argv.m != null) {
                                 //console.log(map);
                             }
                         }
+                        break;
+                    case '@servos':
+                        i++;
+                        for (let j = i; j < i + numServos; j++) {
+                            let elems = lines[j].trim().split("|")
+                            if (elems.length > 1) {
+                                //console.log(elems);
+                                //console.log(lines[j].substring());
+                                let name = elems[0].substring(1).trim();
+                                let type = elems[1].trim();
+                                //console.log(name," -> ", type);
+                                map.get('servo').push(name + " -> " + type);
+                                i++;
+                            }
+                            //console.log(map);
+                        }
+                        break;
+                    case '@digital_devices':
+                        i++;
+                        for (let j = i; j < i + numDigDev; j++) {
+                            let elems = lines[j].trim().split("|")
+                            if (elems.length > 1) {
+                                //console.log(elems);
+                                //console.log(lines[j].substring());
+                                let name = elems[0].substring(3).trim();
+                                let type = elems[1].trim();
+                                //console.log(name," -> ", type);
+                                map.get('digital').push(name + " -> " + type);
+                                i++;
+                            }
+                            //console.log(map);
+                        }
+                        break;
+                    case '@pwm_devices':
+                        i++;
+                        for (let j = i; j < i + numPWM; j++) {
+                            let elems = lines[j].trim().split("|");
+                            if (elems.length > 1) {
+                                //console.log(elems);
+                                //console.log(lines[j].substring());
+                                let name = elems[0].substring(1).trim();
+                                let type = elems[1].trim();
+                                //console.log(name," -> ", type);
+                                map.get('pwm').push(name + " -> " + type);
+                                i++;
+                            }
+                            //console.log(map);
+                        }
+                        break;
+                    case '@analog_input_devices':
+                        i++;
+                        for (let j = i; j < i + numAnalog; j++) {
+                            let elems = lines[j].trim().split("|");
+                            if (elems.length > 1) {
+                                //console.log(elems);
+                                //console.log(lines[j].substring());
+                                let name = elems[0].substring(3).trim();
+                                let type = elems[1].trim();
+                                //console.log(name," -> ", type);
+                                map.get('analog').push(name + " -> " + type);
+                                i++;
+                            }
+                            //console.log(map);
+                        }
+                        break;
+                    case '@i2c':
+                        i++;
+                        for (let j = i; j < i + numI2C; j++) {
+                            let elems = lines[j].trim().split("|")
+                            if (elems.length > 1) {
+                                //console.log(elems);
+                                //console.log(lines[j].substring());
+                                let name = elems[0].substring(1).trim();
+                                let type = elems[1].trim();
+                                //console.log(name," -> ", type);
+                                map.get('i2c').push(name + " -> " + type);
+                                i++;
+                            }
+                            //console.log(map);
+                        }
+
+                        break;
+                    default:
+                    
                 }
             }
         }
 
-        if (yargs.usage(usage).argv.g != null) {
             drawMockHub(map, tag);
-            console.log("\n*Attempt to replicate REV Robotics Control/Expansion Hub (depending on mapping ID). NOT EXACT, but as close as you can get in a terminal...I think.");
-        } else if (yargs.usage(usage).argv.p != null) {
-            listMappings(map, tag);
-        }
+            promptChange(map, tag);
+            
 
     } catch (err) {
         console.log(err);
@@ -210,7 +304,7 @@ function drawMockHub(map, hub_id) {
             } else {
                 if (i < h - 4 && (j > 4 && j < w - 5)) {
                     if (i >= h/2 - hub_id.length/2 && i < h/2 + hub_id.length/2 && j == 5) {
-                        stringToDisplay += chalk.bgHex("#FFA500")(hub_id.charAt(i - (h/2 - hub_id.length/2))) + chalk.bgHex("#FFA500")(" ");
+                        stringToDisplay += chalk.bgHex("#FFA500")(chalk.black(hub_id.charAt(i - (h/2 - hub_id.length/2)))) + chalk.bgHex("#FFA500")(" ");
                     } else {
                         stringToDisplay += chalk.bgHex("#FFA500")("  ");
                     }
@@ -275,5 +369,148 @@ function listMappings(map, hub_id) {
         });
     });
 
-    console.log(chalk.blueBright(stringToDisplay));
+    console.log(stringToDisplay);
+}
+
+async function promptChange(map, tag) {
+    while (true) {
+        //listMappings(map, tag);
+        
+        const answer = await new Promise(resolve => {
+            readline.question("(A)dd, (E)dit, (R)emove mappings, E(X)it? -> ", resolve);
+        });
+        
+        if (answer.toLowerCase().trim() == "a") {
+            const portName = await new Promise(resolve => {
+                readline.question("Enter port name (i.e. MTR 2, SRV 0) -> ", resolve);
+            });
+
+            let data = portName.split(" ");
+            if (data.length <= 1) {
+                console.log("portName format invalid");
+            } else {
+                let num = portName.split(" ")[1].trim();
+                let type = portName.split(" ")[0].trim();
+                
+                const deviceName = await new Promise(resolve => {
+                    readline.question("Enter device name -> ", resolve);
+                });
+
+                const deviceType = await new Promise(resolve => {
+                    readline.question("Enter device type -> ", resolve);
+                });
+
+                switch (type) {
+                    case "MTR":
+                        if (deviceType == "DcMotor" || deviceType == "CRServo") {
+                            map.get('motor').push(deviceName.trim() + " -> " + deviceType.trim());
+                        } else {
+                            console.log("invalid device type for motor port");
+                        }
+                        break;
+                    case "SRV":
+                        if (deviceType == "Servo") {
+                            map.get('servo').push(deviceName.trim() + " -> " + deviceType.trim());
+                        } else {
+                            console.log("invalid device type for servo port");
+                        }
+                        break;
+                    case "PWM": //NOT IMPLEMENTED
+                        continue;
+                    case "I2C":
+                        if (deviceType == "Color Sensor" || deviceType == "Distance Sensor") {
+                            map.get('i2c').push(deviceName.trim() + "->" + deviceType.trim());
+                        } else {
+                            console.log("invalid device type for i2c port");
+                        }
+                        break;
+                    case "DIG":
+                        if (deviceType == "LED") {
+                            map.get('digital').push(deviceName.trim() + " -> " + deviceType.trim());
+                        } else {
+                            console.log("invalid device type for digital port")
+                        }
+                        break;
+                    case "ALG":
+                        if (deviceType == "Potentiometer") {
+                            map.get('analog').push(deviceName.trim() + " -> " + deviceType.trim());
+                        } else {
+                            console.log("invalid device type for analog port")
+                        }
+                        break;
+                    default:
+                        console.log("invalid device type");
+                }
+            }
+        } else if (answer.toLowerCase().trim() == 'e') {
+
+        } else if (answer.toLowerCase().trim() == 'r') {
+
+        } else if (answer.toLowerCase().trim() == 'x') {
+            listMappings(map, tag);
+            writeMap(map, tag);
+            return;
+        }
+    }
+}
+
+function writeMap(map, tag) {
+    try {
+        const data = fs.readFileSync("pkg/util/mappings.txt", 'utf8');
+        let lines = data.split("\r\n");
+
+        let numMotors = 4;
+        let numServos = 6;
+        let numDigDev = 4;
+        let numPWM = 4;
+        let numAnalog = 2;
+        let numI2C = 4;
+
+        let map = new Map();
+        map.set('motor', []);
+        map.set('servo', []);
+        map.set('pwm', []);
+        map.set('i2c', []);
+        map.set('digital', []);
+        map.set('analog', []);
+    
+
+        let tag = lines[0].replace("!", "");
+        //console.log(tag);
+        for (let i = 1; i < lines.length; i++) {
+            if (lines[i].length > 0) {
+                switch (lines[i]) {
+                    case '@motors':
+                        i++;
+
+                
+                        break;
+                    case '@servos':
+                        i++;
+                       
+                        break;
+                    case '@digital_devices':
+                        i++;
+                        
+                        break;
+                    case '@pwm_devices':
+                        i++;
+                       
+                        break;
+                    case '@analog_input_devices':
+                        i++;
+                        
+                        break;
+                    case '@i2c':
+                        i++;
+
+                        break;
+                    default:
+                    
+                }
+            }
+        }
+    } catch (err) {
+
+    };
 }
