@@ -11,13 +11,12 @@ import pkg.hardware.dcmotor.DcMotorSimple.Direction;
 public class test_lom extends LinearOpMode {
     
     DcMotor motor;
-
-    
-
     @Override
     public void runOpMode() throws InterruptedException {
+        System.out.println("hello world");
 
-        motor = hardwareMap.get(DcMotor.class, "testMotor");
+        motor = hardwareMap.get(DcMotor.class, "motor");
+        System.out.println(motor);
         //motor = new DcMotorImpl(1);
         motor.setDirection(Direction.FORWARD);
         motor.setPower(0.2);
@@ -31,18 +30,16 @@ public class test_lom extends LinearOpMode {
             telemetry.addData("Motor power", motor.getPower());
             telemetry.update();
             sleep(20);
-            //requestOpModeStop();
+            
         }
 
         System.out.println(getRuntime());
     }
 }
 
-class MainScript {
+//9898dsdkjsd
+class Validation {
     public static void main(String[] args) {
-        
-        test_lom test = new test_lom();
+        new test_lom();
     }
 }
-
-

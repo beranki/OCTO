@@ -13,9 +13,9 @@ public abstract class OpMode {
     boolean opModeCalled;
     protected HardwareMap hardwareMap;
     
-    public Thread internalOpModeServices;
+    public static Thread internalOpModeServices;
     protected boolean exit = false;
-    public Thread internalUpdate;
+    public static Thread internalUpdate;
 
     public OpMode() {
         init();

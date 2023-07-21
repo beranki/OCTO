@@ -2,15 +2,15 @@
 
 @motors
 0 motor | DcMotor
-1 crs   | CRServo
-2
+1 crs | CRServo
+2 replaceMotor | DcMotor
 3
 
-@servos
+@
 0
 1
 2
-3
+3 testServo | Servo
 4
 5
 

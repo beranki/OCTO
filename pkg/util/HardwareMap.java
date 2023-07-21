@@ -117,6 +117,7 @@ public class HardwareMap implements Iterable {
 
     public <T extends HardwareDevice> T get(Class<T> classOrInterface, String deviceName) {
         for (DeviceMapping<? extends HardwareDevice> deviceMapping : allDeviceMappings) {
+            System.out.println(deviceMapping.entrySet());
             if (deviceMapping.getDeviceTypeClass().equals(classOrInterface)) {
                 return (T)(deviceMapping.get(deviceName));
             }
@@ -161,9 +162,9 @@ public class HardwareMap implements Iterable {
     }
 
     public void put(String deviceName, HardwareDevice device) {
-        //System.out.println(device.getDeviceName());        
+        System.out.println(device.getDeviceName());        
         allDevicesMap.get(device.getDeviceName()).add(device);
-        //System.out.println(allDevicesMap.get(device.getDeviceName()));
+        System.out.println(allDevicesMap.get(device.getDeviceName()));
         
         for (DeviceMapping<? extends HardwareDevice> dmp : allDeviceMappings) {
             if (dmp.getDeviceTypeClass().getSimpleName().equals(device.getDeviceName())) {

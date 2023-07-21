@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ public abstract class LinearOpMode extends OpMode {
 
     public void init() {
         START_TIME = System.currentTimeMillis();
-        MAPPING_PATH = "C:\\Users\\anjan\\OneDrive\\Documents\\GitHub\\octo\\pkg\\util\\mappings.txt";
+        MAPPING_PATH = "pkg\\util\\mappings.txt";
         telemetry = new Telemetry();
         hardwareMap = new HardwareMap();
 
@@ -66,10 +67,9 @@ public abstract class LinearOpMode extends OpMode {
             }
         };
 
-        
-
         internalOpModeServices.start();
         internalUpdate.start();
+
     }
 
     //Place holder isStarted - not yet integrated w/ interface
@@ -124,18 +124,20 @@ public abstract class LinearOpMode extends OpMode {
                     if (l.equals("@motors")) {
                         while (s.hasNextLine()) {
                             String m = s.nextLine();
-                            System.out.println(m);
+                            //System.out.println(m);
                             try {
                                 int portNum = Integer.parseInt(m.charAt(0) + "");
-                                String[] rest = m.substring(1).split("|");
+                                String[] rest = m.substring(1).trim().split(" | ");
                                 String name = rest[0].trim();
-                                String type = rest[1].trim();
+                                String type = rest[2].trim();
+                                //System.out.println(Arrays.asList(rest));
                                 if (name.length() > 0 && type.length() > 0) {
                                     if (type.equals("CRServo")) {
                                         CRServo cr = new CRServoImpl(portNum);
                                         hardwareMap.put(name, cr);
                                     } else if (type.equals("DcMotor")) {
                                         DcMotor motor = new DcMotorImpl(portNum);
+                                        //System.out.println("reached here");
                                         hardwareMap.put(name, motor);
                                     }
                                 }
