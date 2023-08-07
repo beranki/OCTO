@@ -36,10 +36,3 @@ public class test_lom extends LinearOpMode {
         System.out.println(getRuntime());
     }
 }
-
-//9898dsdkjsd
-class Validation {
-    public static void main(String[] args) {
-        new test_lom();
-    }
-}

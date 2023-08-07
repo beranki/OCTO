@@ -20,5 +20,6 @@ public class Telemetry {
             t += tel.remove() + "\r\n";
         }
         System.out.println(t);
+        //System.out.println("===============\nPRESS CTRL C to STOP PROGRAM\n===============");
     }
 }

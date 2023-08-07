@@ -1,0 +1,13 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "init-sbx": "java pkg/util/SANDBOX_REFS.java",
+    "init-lab": "java pkg/util/LAB_REFS.java $PATH" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

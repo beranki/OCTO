@@ -3,7 +3,7 @@ import _yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import terminalImage from "terminal-image";
 import chalk from "chalk";
-import child_process, { exec } from 'child_process';
+import child_process, { exec, execSync, spawn, spawnSync } from 'child_process';
 import terminalLink from 'terminal-link';
 import chalkAnimation from 'chalk-animation';
 import glob from "glob";
@@ -11,6 +11,7 @@ import objectTreeify from "object-treeify";
 import lodash from "lodash";
 import fs from "fs";
 import { createInterface } from "readline";
+import { join } from "path";
 
 const readline = createInterface({
     input: process.stdin,
@@ -571,4 +572,4 @@ function writeMap(map, tag) {
     };
 }
 
-/* ============================== FULL LABS TESTING OPTION HANDLER ============================== */
+/* ============================== FULL SANDBOX TESTING OPTION HANDLER ============================== */
